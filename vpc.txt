@@ -1,0 +1,1 @@
+scp -i "C:/Users/Dell/Downloads/vpc.pem" "C:/Users/Dell/Downloads/vpc.pem" ubuntu@54.91.67.0:/home/ubuntu/
