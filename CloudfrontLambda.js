@@ -1,31 +1,29 @@
-const AWS = require('aws-sdk');
-const dynamodb = new AWS.DynamoDB.DocumentClient();
+import json
+import boto3
+import uuid
 
-exports.handler = async (event) => {
-    const { rollno, name, subject, rating } = JSON.parse(event.body);
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('FeedbackTable')
 
-    const params = {
-        TableName: "FeedbackTable",
-        Item: { rollno, name, subject, rating }
-    };
+def lambda_handler(event, context):
+    body = json.loads(event['body'])
 
-    try {
-        await dynamodb.put(params).promise();
-        return {
-            statusCode: 200,
-            headers: {
-                "Access-Control-Allow-Origin": "https://dd2iz5boum8an.cloudfront.net/", // or your domain
-                "Access-Control-Allow-Headers": "Content-Type",
-                "Access-Control-Allow-Methods": "POST"
-            },
-            body: JSON.stringify({ message: "Feedback submitted!" })
-        };
-    } catch (err) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: err.message })
-        };
+    item = {
+       
+        'rollno': body['rollno'],       # ✅ matching frontend lowercase key
+        'name': body['name'],
+        'subject': body['subject'],
+        'rating': body['rating']
     }
-};
 
+    table.put_item(Item=item)
 
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Access-Control-Allow-Origin': '*',  # or your frontend domain
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Methods': 'POST,OPTIONS'
+        },
+        'body': json.dumps({ 'message': 'Feedback received!' })
+    }
