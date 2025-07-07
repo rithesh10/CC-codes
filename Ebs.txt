@@ -1,0 +1,1 @@
+ssh-keygen -y -f your-key.pem > your-key.pub
